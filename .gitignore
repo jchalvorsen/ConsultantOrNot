@@ -99,3 +99,9 @@ ENV/
 
 # mypy
 .mypy_cache/
+
+
+webapp/img/*
+data/suitsglasses/train/*
+data/suitsglasses/valid/*
+models/vgg16_sg.h5
