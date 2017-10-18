@@ -1,28 +1,111 @@
-<!doctype html>
 
-<!-- example code gotten from https://github.com/jhuckaby/webcamjs -->
 
+<!DOCTYPE html>
 <html lang="en">
     <head>
+        <!-- Required meta tags -->
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-        <title>Consultant or not</title>
-        <style type="text/css">
-            body { font-family: Helvetica, sans-serif; }
-            h2, h3 { margin-top:0; }
-            form { margin-top: 15px; }
-            form > input { margin-right: 15px; }
-            #results { float:right; margin:20px; padding:20px; border:1px solid; background:#ccc; }
-            #class   { float:right; margin:20px; padding:20px; border:1px solid; background:#ccc; }
+        <title>IT-Consultant or Not</title>
+        <!-- Bootstrap CSS -->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css" integrity="sha384-/Y6pD6FV/Vv2HJnA6t+vslU6fwYXjCFtcEpHbNJ0lyAFsXTsjBbfaDjzALeQsN6M" crossorigin="anonymous">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+        <style>
+            /*****************************
+            *   SPINNER
+            *****************************/
+            #fade {
+                display: none;
+                position: fixed;
+                top: 0%;
+                left: 0%;
+                width: 100%;
+                height: 100%;
+                background-color: #ababab;
+                z-index: 1051;
+                -moz-opacity: 0.8;
+                opacity: .70;
+                filter: alpha(opacity=80);
+            }
+            
+            #modal {
+                display: none;
+                position: fixed;
+                top: 45%;
+                left: 45%;
+                width: 128px;
+                height: 128px;
+                padding: 30px 15px 0px;
+                border: 3px solid #ababab;
+                box-shadow: 1px 1px 10px #ababab;
+                border-radius: 20px;
+                background-color: white;
+                z-index: 1052;
+                text-align: center;
+                overflow: auto;
+            }
         </style>
     </head>
     <body>
-        <div id="results">Your captured image will appear here...</div>
-        <div id="class">Your captured class will appear here...</div>
-        <h1>Consultant or not</h1>
-        <h3>Are you an it consultant or a management trainee?</h3>
+        
+        <div class="container container-fluid">
+            
+            <div class="row">
+                <div class="col-sm-12 col-md-4">
+                    <img src="{{ url_for('static', filename='visma.jpg') }}" alt="Visma-logo" title="Visma.logo" class="img-fluid">
+                </div>
+                <div class="col-sm-12 col-md-8">
+                    <h1>Consultant or not</h1>
+                    <h3>Are you an IT-Consultant or a management trainee?</h3>
+                </div>           
+            </div>
+            
+            
+            
+            <div class="row">
+                <div class="col-sm-12 col-md-8">
+                    <div id="my_camera" class="img-fluid rounded"></div>    
+                </div>
+                <div class="col-sm-12 col-md-4">
+                    <img id="result-img" class="img-fluid rounded" style="width: 100%; display: none;"/>
+                    <div id="class" class="alert alert-primary">
+                        <h2>Your captured class will appear here...</h2>
+                        <i id="spinner" class="fa fa-spinner fa-pulse fa-5x fa-fw" style="width: 100%; display: none;"></i>
+                    </div>  
+                </div>
+            </div>
+            
+            <div class="row">
+                <div class="col-sm-12 col-md-6">
+                    <form>
+                        <input type="button" class="btn btn-lg btn-block btn-primary" value="Take Snapshot" onclick="take_snapshot()">
+                    </form>
+                </div>
+                <div class="col-sm-12 col-md-6">
+                    <button type="button" class="btn btn-lg btn-block btn-secondary" id="clear_results_button" onclick="clear_results()">Reset</button>                      
+                </div>
+            </div>
+            
+            <div class="row">
+                <div class="col-sm-12">
+                    <a class="btn btn-lg btn-block btn-link" href="https://www.visma.no/consulting/konsulent-jobb/interesseskjema/" target="_blank" role="button">Interessert i jobb i Visma Consulting?</a>
+                </div>
+            </div>
+        </div>
+    
+        
+        <!--MODAL -->
+        <div id="fade"></div>
+        <div id="modal">
+            <div class="fa fa-spinner fa-pulse fa-5x"></div>
+        </div>
+        
 
-        <div id="my_camera"></div>
-
+        <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js" integrity="sha384-b/U6ypiBEHpOf/4+1nzFpr53nxSS+GLCkfwBdFNTxtclqqenISfwAzpKaMNFNmj4" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/js/bootstrap.min.js" integrity="sha384-h0AbiXch4ZDo7tp9hKZ4TsHbi047NrKGLO3SEJAg45jXxnGIfYzk4Si90RDIqNm1" crossorigin="anonymous"></script>
+               
         <!-- First, include the Webcam.js JavaScript Library -->
         <script src="{{ url_for('static', filename='webcam.js') }}"></script>
 
@@ -36,32 +119,40 @@
                 upload_name: 'photo'
             });
             Webcam.attach( '#my_camera' );
-        </script>
+            $("#my_camera").attr("style", "width: 100%");
+            $("#my_camera video").attr("style","width: 100%");
+            $("#my_camera video").addClass("img-fluid rounded");
 
-        <!-- A button for taking snaps -->
-        <form>
-            <input type=button value="Take Snapshot" onClick="take_snapshot()">
-        </form>
+        </script>
+        
 
         <!-- Code to handle taking the snapshot and displaying it locally -->
         <script language="JavaScript">
             function take_snapshot() {
+                $("#class h2").text("");
+                $("#class #spinner").show();
                 // take snapshot and get image data
                 Webcam.snap( function(data_uri) {
                     // display results in page
-                    document.getElementById('results').innerHTML = 
-                        '<h2>Here is your image:</h2>' + 
-                        '<img src="'+data_uri+'"/>';
-                    console.log(data_uri);
+                    $("#result-img").attr('src', data_uri )
+                    $("#clear_results_button").text('Click to clear results')
+                    $("#result-img").show()
+                    
                     Webcam.upload( data_uri, 'upload', function(code, text){
-                        console.log('Save successfully');
-                        console.log(text);
-                        document.getElementById('class').innerHTML = '<h2>' + text + '</h2>';
+                        $("#class #spinner").hide();
+                        $("#class h2").text(text);                      
                     });   
                     
                 });
             }
         </script>
+        <script language="JavaScript">
+            function clear_results() {
+                $("#result-img").hide()                
+                $("#class h2").text("Your captured class will appear here...");
+            }
+            
 
+        </script>
     </body>
 </html>
