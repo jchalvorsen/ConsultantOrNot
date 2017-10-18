@@ -34,7 +34,7 @@ def vgg_preprocess(x):
 
 def VGG_16():
     model = Sequential()
-    model.classes = ['IT Consultant', 'Management Trainee']
+    model.classes = ['an IT Consultant', ' a Management Trainee']
     model.add(Lambda(vgg_preprocess, input_shape=(3,224,224)))
 
     ConvBlock(2, model, 64)

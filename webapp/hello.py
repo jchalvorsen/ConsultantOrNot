@@ -31,7 +31,7 @@ def upload():
         img = img.transpose()
         img = np.expand_dims(img, axis=0).astype(np.uint8)
         preds, idxs, classes = predict(model, img)     
-        return 'You are a ' + str(classes[0]) + ' with a confidence of ' + str(int(round(preds[0]*100))) + '%'
+        return 'You are ' + str(classes[0]) + ' with a confidence of ' + str(int(round(preds[0]*100))) + '%'
     
     return render_template('upload.html')
 
