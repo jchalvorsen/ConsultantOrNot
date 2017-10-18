@@ -31,7 +31,7 @@ def upload():
         img = img.transpose()
         img = np.expand_dims(img, axis=0).astype(np.uint8)
         preds, idxs, classes = predict(model, img)     
-        return 'You are a ' + str(classes[0]) + ' with a confidence of ' + str(preds[0])
+        return 'You are a ' + str(classes[0]) + ' with a confidence of ' + str(int(round(preds[0]*100))) + '%'
     
     return render_template('upload.html')
 
@@ -45,5 +45,5 @@ def hello():
     return "Hello Westerdals!"
 
 if __name__ == "__main__":
-    app.run(host = '0.0.0.0', port=5000)
+    app.run(host = '0.0.0.0', port=5000,ssl_context='adhoc')
 
